@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FridgeChef — Recipe Admin (PoC)</title>
+  <style>
+    body{font-family:system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", sans-serif;margin:0;padding:18px;background:#fafafa}
+    .wrap{max-width:1100px;margin:0 auto}
+    .header{display:flex;align-items:center;justify-content:space-between}
+    .list{display:flex;gap:12px;margin-top:18px}
+    .sidebar{width:320px;background:#fff;border:1px solid #eee;padding:12px;border-radius:8px;height:70vh;overflow:auto}
+    .main{flex:1;background:#fff;border:1px solid #eee;padding:12px;border-radius:8px;height:70vh;overflow:auto}
+    .item{padding:8px;border-bottom:1px solid #f2f2f2;cursor:pointer}
+    .item:hover{background:#f7f7f7}
+    input,textarea,select{width:100%;padding:8px;margin:6px 0;border:1px solid #ddd;border-radius:6px}
+    button{background:#FF6B35;color:#fff;border:0;padding:8px 12px;border-radius:6px;cursor:pointer}
+    .row{display:flex;gap:8px}
+    .small{width:120px}
+    pre{white-space:pre-wrap;background:#fafafa;padding:8px;border-radius:6px;border:1px solid #eee}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <h2>FridgeChef — Recipe Admin (PoC)</h2>
+      <div>
+        <button id="btnReload">Reload</button>
+        <button id="btnDownload">Download JSONL</button>
+      </div>
+    </div>
+
+    <div class="list">
+      <div class="sidebar">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>Recipes</strong>
+          <small id="count">0</small>
+        </div>
+        <div id="list"></div>
+        <hr />
+        <div>
+          <strong>Add new</strong>
+          <input id="newId" placeholder="id (unique)" />
+          <input id="newTitle" placeholder="title" />
+          <textarea id="newIngredients" placeholder='ingredients (comma separated)'>
+          </textarea>
+          <textarea id="newSteps" placeholder='steps (line separated)'></textarea>
+          <div style="display:flex;gap:8px"><button id="btnAdd">Add</button><button id="btnClear">Clear</button></div>
+        </div>
+      </div>
+
+      <div class="main">
+        <div id="detailHolder">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3 id="detailTitle">Select a recipe</h3>
+            <div>
+              <button id="btnSave">Save</button>
+              <button id="btnDelete" style="background:#c0392b">Delete</button>
+            </div>
+          </div>
+
+          <div id="detailForm" style="margin-top:12px">
+            <label>id</label>
+            <input id="field_id" readonly />
+            <label>title</label>
+            <input id="field_title" />
+            <label>ingredients (comma separated)</label>
+            <textarea id="field_ingredients"></textarea>
+            <label>keyIngredients (comma separated)</label>
+            <input id="field_keyingredients" />
+            <label>optional (comma separated)</label>
+            <input id="field_optional" />
+            <label>steps (one per line)</label>
+            <textarea id="field_steps"></textarea>
+            <label>time (minutes)</label>
+            <input id="field_time" type="number" class="small" />
+            <label>servings</label>
+            <input id="field_servings" type="number" class="small" />
+            <label>caloriesPerPerson</label>
+            <input id="field_cal" type="number" class="small" />
+            <label>cuisine</label>
+            <input id="field_cuisine" />
+            <label>tags (comma separated)</label>
+            <input id="field_tags" />
+            <label>source</label>
+            <input id="field_source" />
+            <div style="margin-top:12px"><strong>Raw JSON</strong><pre id="raw"></pre></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(async ()=>{
+  const listEl = document.getElementById('list')
+  const countEl = document.getElementById('count')
+  const btnReload = document.getElementById('btnReload')
+  const btnDownload = document.getElementById('btnDownload')
+  const btnAdd = document.getElementById('btnAdd')
+  const btnClear = document.getElementById('btnClear')
+  const btnSave = document.getElementById('btnSave')
+  const btnDelete = document.getElementById('btnDelete')
+
+  let data = []
+  let current = null
+
+  async function load(){
+    try{
+      const res = await fetch('/data/recipes_claude_add100.jsonl')
+      if(!res.ok) throw new Error('Not found')
+      const txt = await res.text()
+      data = txt.split('\n').filter(Boolean).map(l=>JSON.parse(l))
+    }catch(e){
+      // fallback to repo relative path
+      try{
+        const res = await fetch('data/recipes_claude_add100.jsonl')
+        const txt = await res.text()
+        data = txt.split('\n').filter(Boolean).map(l=>JSON.parse(l))
+      }catch(e2){
+        data = []
+      }
+    }
+    renderList()
+  }
+  function renderList(){
+    listEl.innerHTML = ''
+    data.forEach(r=>{
+      const d = document.createElement('div'); d.className='item'; d.textContent = r.id + ' - ' + (r.title||'');
+      d.onclick = ()=>select(r.id)
+      listEl.appendChild(d)
+    })
+    countEl.textContent = data.length
+  }
+  function select(id){
+    current = data.find(x=>x.id===id)
+    if(!current) return
+    document.getElementById('detailTitle').textContent = current.title||current.id
+    document.getElementById('field_id').value = current.id||''
+    document.getElementById('field_title').value = current.title||''
+    document.getElementById('field_ingredients').value = (current.ingredients||[]).join(', ')
+    document.getElementById('field_keyingredients').value = (current.keyIngredients||[]).join(', ')
+    document.getElementById('field_optional').value = (current.optional||[]).join(', ')
+    document.getElementById('field_steps').value = (current.steps||[]).join('\n')
+    document.getElementById('field_time').value = current.time||''
+    document.getElementById('field_servings').value = current.servings||''
+    document.getElementById('field_cal').value = current.caloriesPerPerson||''
+    document.getElementById('field_cuisine').value = current.cuisine||''
+    document.getElementById('field_tags').value = (current.tags||[]).join(', ')
+    document.getElementById('field_source').value = current.source||''
+    document.getElementById('raw').textContent = JSON.stringify(current, null, 2)
+  }
+  btnReload.onclick = ()=>load()
+
+  btnAdd.onclick = ()=>{
+    const id = document.getElementById('newId').value.trim();
+    if(!id){alert('id required');return}
+    if(data.some(x=>x.id===id)){alert('id exists');return}
+    const title = document.getElementById('newTitle').value.trim()||id
+    const ingredients = document.getElementById('newIngredients').value.split(',').map(s=>s.trim()).filter(Boolean)
+    const steps = document.getElementById('newSteps').value.split('\n').map(s=>s.trim()).filter(Boolean)
+    const obj = {id,title,ingredients,steps,time:10,servings:2,caloriesPerPerson:200,cuisine:'한식',tags:[],source:'manual'}
+    data.unshift(obj)
+    renderList(); select(obj.id)
+  }
+  btnClear.onclick = ()=>{document.getElementById('newId').value='';document.getElementById('newTitle').value='';document.getElementById('newIngredients').value='';document.getElementById('newSteps').value=''}
+
+  btnSave.onclick = ()=>{
+    if(!current) return alert('Select one')
+    current.title = document.getElementById('field_title').value
+    current.ingredients = document.getElementById('field_ingredients').value.split(',').map(s=>s.trim()).filter(Boolean)
+    current.keyIngredients = document.getElementById('field_keyingredients').value.split(',').map(s=>s.trim()).filter(Boolean)
+    current.optional = document.getElementById('field_optional').value.split(',').map(s=>s.trim()).filter(Boolean)
+    current.steps = document.getElementById('field_steps').value.split('\n').map(s=>s.trim()).filter(Boolean)
+    current.time = parseInt(document.getElementById('field_time').value)||0
+    current.servings = parseInt(document.getElementById('field_servings').value)||1
+    current.caloriesPerPerson = parseInt(document.getElementById('field_cal').value)||0
+    current.cuisine = document.getElementById('field_cuisine').value
+    current.tags = document.getElementById('field_tags').value.split(',').map(s=>s.trim()).filter(Boolean)
+    current.source = document.getElementById('field_source').value
+    document.getElementById('raw').textContent = JSON.stringify(current,null,2)
+    renderList()
+    alert('Saved locally (in-memory). Click Download JSONL to persist to file.')
+  }
+
+  btnDelete.onclick = ()=>{
+    if(!current) return alert('Select one')
+    if(!confirm('Delete '+current.id+' ?')) return
+    data = data.filter(x=>x.id!==current.id)
+    current = null
+    renderList()
+    document.getElementById('detailTitle').textContent='Select a recipe'
+    document.getElementById('raw').textContent=''
+  }
+
+  btnDownload.onclick = ()=>{
+    const blob = new Blob([data.map(x=>JSON.stringify(x)).join('\n')+'\n'], {type:'application/json;charset=utf-8'})
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a'); a.href=url; a.download='recipes_admin_export.jsonl'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url)
+  }
+
+  await load()
+  // auto-select first
+  if(data.length>0) select(data[0].id)
+})()
+</script>
+</body>
+</html>
