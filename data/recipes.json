@@ -1,0 +1,272 @@
+[
+  {
+    "id": "sample_local_1",
+    "title": "아빠표 맛있는 요리 1",
+    "ingredients": [
+      "닭고기",
+      "간장",
+      "마늘"
+    ],
+    "keyIngredients": [
+      "닭고기"
+    ],
+    "optional": [],
+    "steps": [
+      "1. 준비 단계 1",
+      "2. 준비 단계 2",
+      "3. 준비 단계 3"
+    ],
+    "time": 21,
+    "servings": 2,
+    "caloriesPerPerson": 310,
+    "cuisine": "한식",
+    "tags": [
+      "가족식",
+      "간단"
+    ],
+    "source": "local-sample"
+  },
+  {
+    "id": "sample_local_2",
+    "title": "아빠표 맛있는 요리 2",
+    "ingredients": [
+      "감자",
+      "양파",
+      "달걀"
+    ],
+    "keyIngredients": [
+      "감자"
+    ],
+    "optional": [],
+    "steps": [
+      "1. 준비 단계 1",
+      "2. 준비 단계 2",
+      "3. 준비 단계 3"
+    ],
+    "time": 22,
+    "servings": 2,
+    "caloriesPerPerson": 320,
+    "cuisine": "한식",
+    "tags": [
+      "가족식",
+      "간단"
+    ],
+    "source": "local-sample"
+  },
+  {
+    "id": "sample_local_3",
+    "title": "아빠표 맛있는 요리 3",
+    "ingredients": [
+      "닭고기",
+      "간장",
+      "마늘"
+    ],
+    "keyIngredients": [
+      "닭고기"
+    ],
+    "optional": [],
+    "steps": [
+      "1. 준비 단계 1",
+      "2. 준비 단계 2",
+      "3. 준비 단계 3"
+    ],
+    "time": 23,
+    "servings": 2,
+    "caloriesPerPerson": 330,
+    "cuisine": "중식",
+    "tags": [
+      "가족식",
+      "간단"
+    ],
+    "source": "local-sample"
+  },
+  {
+    "id": "sample_local_4",
+    "title": "아빠표 맛있는 요리 4",
+    "ingredients": [
+      "감자",
+      "양파",
+      "달걀"
+    ],
+    "keyIngredients": [
+      "감자"
+    ],
+    "optional": [],
+    "steps": [
+      "1. 준비 단계 1",
+      "2. 준비 단계 2",
+      "3. 준비 단계 3"
+    ],
+    "time": 24,
+    "servings": 2,
+    "caloriesPerPerson": 340,
+    "cuisine": "양식",
+    "tags": [
+      "가족식",
+      "간단"
+    ],
+    "source": "local-sample"
+  },
+  {
+    "id": "sample_local_5",
+    "title": "아빠표 맛있는 요리 5",
+    "ingredients": [
+      "닭고기",
+      "간장",
+      "마늘"
+    ],
+    "keyIngredients": [
+      "닭고기"
+    ],
+    "optional": [],
+    "steps": [
+      "1. 준비 단계 1",
+      "2. 준비 단계 2",
+      "3. 준비 단계 3"
+    ],
+    "time": 25,
+    "servings": 2,
+    "caloriesPerPerson": 350,
+    "cuisine": "한식",
+    "tags": [
+      "가족식",
+      "간단"
+    ],
+    "source": "local-sample"
+  },
+  {
+    "id": "sample_local_6",
+    "title": "아빠표 맛있는 요리 6",
+    "ingredients": [
+      "감자",
+      "양파",
+      "달걀"
+    ],
+    "keyIngredients": [
+      "감자"
+    ],
+    "optional": [],
+    "steps": [
+      "1. 준비 단계 1",
+      "2. 준비 단계 2",
+      "3. 준비 단계 3"
+    ],
+    "time": 26,
+    "servings": 2,
+    "caloriesPerPerson": 360,
+    "cuisine": "한식",
+    "tags": [
+      "가족식",
+      "간단"
+    ],
+    "source": "local-sample"
+  },
+  {
+    "id": "sample_local_7",
+    "title": "아빠표 맛있는 요리 7",
+    "ingredients": [
+      "닭고기",
+      "간장",
+      "마늘"
+    ],
+    "keyIngredients": [
+      "닭고기"
+    ],
+    "optional": [],
+    "steps": [
+      "1. 준비 단계 1",
+      "2. 준비 단계 2",
+      "3. 준비 단계 3"
+    ],
+    "time": 27,
+    "servings": 2,
+    "caloriesPerPerson": 370,
+    "cuisine": "중식",
+    "tags": [
+      "가족식",
+      "간단"
+    ],
+    "source": "local-sample"
+  },
+  {
+    "id": "sample_local_8",
+    "title": "아빠표 맛있는 요리 8",
+    "ingredients": [
+      "감자",
+      "양파",
+      "달걀"
+    ],
+    "keyIngredients": [
+      "감자"
+    ],
+    "optional": [],
+    "steps": [
+      "1. 준비 단계 1",
+      "2. 준비 단계 2",
+      "3. 준비 단계 3"
+    ],
+    "time": 28,
+    "servings": 2,
+    "caloriesPerPerson": 380,
+    "cuisine": "양식",
+    "tags": [
+      "가족식",
+      "간단"
+    ],
+    "source": "local-sample"
+  },
+  {
+    "id": "sample_local_9",
+    "title": "아빠표 맛있는 요리 9",
+    "ingredients": [
+      "닭고기",
+      "간장",
+      "마늘"
+    ],
+    "keyIngredients": [
+      "닭고기"
+    ],
+    "optional": [],
+    "steps": [
+      "1. 준비 단계 1",
+      "2. 준비 단계 2",
+      "3. 준비 단계 3"
+    ],
+    "time": 29,
+    "servings": 2,
+    "caloriesPerPerson": 390,
+    "cuisine": "한식",
+    "tags": [
+      "가족식",
+      "간단"
+    ],
+    "source": "local-sample"
+  },
+  {
+    "id": "sample_local_10",
+    "title": "아빠표 맛있는 요리 10",
+    "ingredients": [
+      "감자",
+      "양파",
+      "달걀"
+    ],
+    "keyIngredients": [
+      "감자"
+    ],
+    "optional": [],
+    "steps": [
+      "1. 준비 단계 1",
+      "2. 준비 단계 2",
+      "3. 준비 단계 3"
+    ],
+    "time": 30,
+    "servings": 2,
+    "caloriesPerPerson": 400,
+    "cuisine": "한식",
+    "tags": [
+      "가족식",
+      "간단"
+    ],
+    "source": "local-sample"
+  }
+]
