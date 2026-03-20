@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>FridgeChef — Recipe Admin (PoC)</title>
+  <title>FridgeChef — 레시피 관리자 (PoC)</title>
   <style>
     body{font-family:system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", sans-serif;margin:0;padding:18px;background:#fafafa}
     .wrap{max-width:1100px;margin:0 auto}
@@ -23,68 +23,68 @@
 <body>
   <div class="wrap">
     <div class="header">
-      <h2>FridgeChef — Recipe Admin (PoC)</h2>
+      <h2>FridgeChef — 레시피 관리자 (PoC)</h2>
       <div>
-        <button id="btnReload">Reload</button>
-        <button id="btnDownload">Download JSONL</button>
+        <button id="btnReload">불러오기</button>
+        <button id="btnDownload">JSONL 다운로드</button>
       </div>
     </div>
 
     <div class="list">
       <div class="sidebar">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <strong>Recipes</strong>
+          <strong>레시피 목록</strong>
           <small id="count">0</small>
         </div>
         <div id="list"></div>
         <hr />
         <div>
-          <strong>Add new</strong>
-          <input id="newId" placeholder="id (unique)" />
-          <input id="newTitle" placeholder="title" />
-          <textarea id="newIngredients" placeholder='ingredients (comma separated)'>
+          <strong>새 레시피 추가</strong>
+          <input id="newId" placeholder="id (고유)" />
+          <input id="newTitle" placeholder="제목" />
+          <textarea id="newIngredients" placeholder='재료 (쉼표로 구분)'>
           </textarea>
-          <textarea id="newSteps" placeholder='steps (line separated)'></textarea>
-          <div style="display:flex;gap:8px"><button id="btnAdd">Add</button><button id="btnClear">Clear</button></div>
+          <textarea id="newSteps" placeholder='조리단계 (줄바꿈으로 구분)'></textarea>
+          <div style="display:flex;gap:8px"><button id="btnAdd">추가</button><button id="btnClear">초기화</button></div>
         </div>
       </div>
 
       <div class="main">
         <div id="detailHolder">
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <h3 id="detailTitle">Select a recipe</h3>
+            <h3 id="detailTitle">레시피 선택</h3>
             <div>
-              <button id="btnSave">Save</button>
-              <button id="btnDelete" style="background:#c0392b">Delete</button>
+              <button id="btnSave">저장</button>
+              <button id="btnDelete" style="background:#c0392b">삭제</button>
             </div>
           </div>
 
           <div id="detailForm" style="margin-top:12px">
             <label>id</label>
             <input id="field_id" readonly />
-            <label>title</label>
+            <label>제목</label>
             <input id="field_title" />
-            <label>ingredients (comma separated)</label>
+            <label>재료 (쉼표로 구분)</label>
             <textarea id="field_ingredients"></textarea>
-            <label>keyIngredients (comma separated)</label>
+            <label>핵심 재료 (쉼표로 구분)</label>
             <input id="field_keyingredients" />
-            <label>optional (comma separated)</label>
+            <label>선택 재료 (쉼표로 구분)</label>
             <input id="field_optional" />
-            <label>steps (one per line)</label>
+            <label>조리 단계 (줄마다 한 단계)</label>
             <textarea id="field_steps"></textarea>
-            <label>time (minutes)</label>
+            <label>시간 (분)</label>
             <input id="field_time" type="number" class="small" />
-            <label>servings</label>
+            <label>인분</label>
             <input id="field_servings" type="number" class="small" />
-            <label>caloriesPerPerson</label>
+            <label>1인분 칼로리</label>
             <input id="field_cal" type="number" class="small" />
-            <label>cuisine</label>
+            <label>요리 종류 (한식/양식 등)</label>
             <input id="field_cuisine" />
-            <label>tags (comma separated)</label>
+            <label>태그 (쉼표로 구분)</label>
             <input id="field_tags" />
-            <label>source</label>
+            <label>출처</label>
             <input id="field_source" />
-            <div style="margin-top:12px"><strong>Raw JSON</strong><pre id="raw"></pre></div>
+            <div style="margin-top:12px"><strong>원본 JSON</strong><pre id="raw"></pre></div>
           </div>
         </div>
       </div>
@@ -154,8 +154,8 @@
 
   btnAdd.onclick = ()=>{
     const id = document.getElementById('newId').value.trim();
-    if(!id){alert('id required');return}
-    if(data.some(x=>x.id===id)){alert('id exists');return}
+    if(!id){alert('id 필요');return}
+    if(data.some(x=>x.id===id)){alert('id가 이미 존재합니다');return}
     const title = document.getElementById('newTitle').value.trim()||id
     const ingredients = document.getElementById('newIngredients').value.split(',').map(s=>s.trim()).filter(Boolean)
     const steps = document.getElementById('newSteps').value.split('\n').map(s=>s.trim()).filter(Boolean)
@@ -166,7 +166,7 @@
   btnClear.onclick = ()=>{document.getElementById('newId').value='';document.getElementById('newTitle').value='';document.getElementById('newIngredients').value='';document.getElementById('newSteps').value=''}
 
   btnSave.onclick = ()=>{
-    if(!current) return alert('Select one')
+    if(!current) return alert('레시피를 선택하세요')
     current.title = document.getElementById('field_title').value
     current.ingredients = document.getElementById('field_ingredients').value.split(',').map(s=>s.trim()).filter(Boolean)
     current.keyIngredients = document.getElementById('field_keyingredients').value.split(',').map(s=>s.trim()).filter(Boolean)
@@ -180,16 +180,16 @@
     current.source = document.getElementById('field_source').value
     document.getElementById('raw').textContent = JSON.stringify(current,null,2)
     renderList()
-    alert('Saved locally (in-memory). Click Download JSONL to persist to file.')
+    alert('로컬에 저장되었습니다 (메모리). 파일로 내보내려면 JSONL 다운로드 버튼을 클릭하세요.')
   }
 
   btnDelete.onclick = ()=>{
-    if(!current) return alert('Select one')
-    if(!confirm('Delete '+current.id+' ?')) return
+    if(!current) return alert('레시피를 선택하세요')
+    if(!confirm('정말 삭제하시겠습니까? (id: '+current.id+')')) return
     data = data.filter(x=>x.id!==current.id)
     current = null
     renderList()
-    document.getElementById('detailTitle').textContent='Select a recipe'
+    document.getElementById('detailTitle').textContent='레시피 선택'
     document.getElementById('raw').textContent=''
   }
 
