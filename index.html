@@ -1251,6 +1251,16 @@ let generatedRecipes = [];
 let favorites = JSON.parse(localStorage.getItem('fc_favorites') || '[]');
 let currentStep = 0;
 
+// escaping utilities to prevent XSS
+function escapeHTML(s){
+  return String(s).replace(/[&<>"']/g, function(c){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[c];
+  });
+}
+function escapeAttr(s){
+  return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\'").replace(/"/g,'\\\"');
+}
+
 // ──────────────────────────────────────────
 // AUTOCOMPLETE DATA
 // ──────────────────────────────────────────
@@ -1872,7 +1882,7 @@ function removeIngredient(name) {
 function renderTags() {
   const container = document.getElementById('ingredientTags');
   container.innerHTML = ingredients.map(i =>
-    `<div class="tag">${i}<span class="tag-del" onclick="removeIngredient('${i}')">✕</span></div>`
+    `<div class="tag">${escapeHTML(i)}<span class="tag-del" onclick="removeIngredient('${escapeAttr(i)}')">✕</span></div>`
   ).join('');
   document.getElementById('step0Next').disabled = ingredients.length === 0;
 }
@@ -2622,13 +2632,13 @@ function renderCommunityFeed() {
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">
           ${rankBadge}<span class="post-type-badge ${meta.cls}">${meta.label}</span>${winnerBadge}
         </div>
-        <div class="post-title">${post.title}</div>
-        <div class="post-preview">${post.content}</div>
+        <div class="post-title">${escapeHTML(post.title)}</div>
+        <div class="post-preview">${escapeHTML(post.content)}</div>
         ${tags ? `<div class="post-tags">${tags}</div>` : ''}
         <div class="post-footer">
           <div class="post-author">
             ${avatarHTML(user)}
-            <span>${user.name}</span>
+            <span>${escapeHTML(user.name)}</span>
             ${user.isExpert ? `<span class="expert-badge">전문가</span>` : ''}
             <span style="opacity:.5">·</span>
             <span>${timeAgo(post.time)}</span>
@@ -2720,18 +2730,18 @@ function renderPostDetail(post) {
   document.getElementById('postDetailContent').innerHTML = `
     <div class="post-detail-card">
       <span class="post-type-badge ${meta.cls}">${meta.label}</span>
-      <div class="post-detail-title">${post.title}</div>
+      <div class="post-detail-title">${escapeHTML(post.title)}</div>
       <div class="post-author" style="margin-bottom:12px">
         ${avatarHTML(user,'lg')}
         <div>
-          <div style="font-size:13px;font-weight:700">${user.name}
+          <div style="font-size:13px;font-weight:700">${escapeHTML(user.name)}
             ${user.isExpert ? `<span class="expert-badge">전문가</span>` : ''}
           </div>
           <div style="font-size:11px;color:var(--text-muted)">${user.role} · ${timeAgo(post.time)}</div>
         </div>
       </div>
       ${photoGalleryHTML}
-      <div class="post-detail-content">${post.content.replace(/\n/g,'<br>')}</div>
+      <div class="post-detail-content">${escapeHTML(post.content).replace(/\n/g,'<br>')}</div>
       ${recipeDetailHTML}
       ${tags ? `<div class="post-tags" style="margin-bottom:12px">${tags}</div>` : ''}
       <div class="post-detail-footer">
@@ -2786,7 +2796,7 @@ function renderComment(c, postId) {
     const steps = c.recipe.steps.map(s => `<li>${s}</li>`).join('');
     recipeHTML = `
       <div class="comment-recipe-box">
-        <div class="comment-recipe-title">${c.recipe.title}</div>
+        <div class="comment-recipe-title">${escapeHTML(c.recipe.title)}</div>
         <ul class="comment-recipe-steps">${steps}</ul>
       </div>`;
   }
@@ -2796,7 +2806,7 @@ function renderComment(c, postId) {
       <div class="comment-author">
         ${avatarHTML(user,'lg')}
         <div>
-          <div class="comment-name">${user.name}
+          <div class="comment-name">${escapeHTML(user.name)}
             ${user.isExpert ? `<span class="expert-badge">전문가</span>` : ''}
           </div>
           <div class="comment-meta">${user.role} · ${timeAgo(c.time)}</div>
@@ -2804,7 +2814,7 @@ function renderComment(c, postId) {
       </div>
       ${c.isBest ? `<span class="best-badge">🏆 채택</span>` : ''}
     </div>
-    <div class="comment-body">${c.body.replace(/\n/g,'<br>')}</div>
+    <div class="comment-body">${escapeHTML(c.body).replace(/\n/g,'<br>')}</div>
     ${recipeHTML}
     <div class="comment-footer">
       <button class="comment-like-btn ${isLiked?'liked':''}" onclick="likeComment('${c.id}','${postId}')">
@@ -2993,11 +3003,24 @@ function filterPosts(filter, el) {
 // 사진 업로드 처리
 // ──────────────────────────────────────────
 function handlePhotoUpload(event, type) {
-  const files = Array.from(event.target.files);
+  const files = Array.from(event.target.files || []);
   const arr   = type === 'main' ? newMainPhotos : newStepPhotos;
   const max   = type === 'main' ? 3 : 6;
+  const MAX_BYTES = 2 * 1024 * 1024; // 2MB per file
 
-  files.slice(0, max - arr.length).forEach(file => {
+  if (files.length === 0) return;
+  if (arr.length >= max) { showToast(`사진은 최대 ${max}장까지 업로드 가능합니다.`); event.target.value=''; return; }
+
+  const allowedSlots = Math.max(0, max - arr.length);
+  const toProcess = files.slice(0, allowedSlots);
+  const skipped = files.length - toProcess.length;
+  if (skipped > 0) showToast(`최대 ${max}장만 추가됩니다.`);
+
+  toProcess.forEach(file => {
+    if (file.size && file.size > MAX_BYTES) {
+      showToast('파일이 너무 큽니다. 최대 2MB 이하의 이미지만 업로드하세요.');
+      return;
+    }
     const reader = new FileReader();
     reader.onload = e => {
       const img = new Image();
@@ -3008,12 +3031,21 @@ function handlePhotoUpload(event, type) {
         if (w > h && w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
         else if (h > MAX)     { w = Math.round(w * MAX / h); h = MAX; }
         canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        arr.push(canvas.toDataURL('image/jpeg', 0.72));
-        renderPhotoGrid(type);
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        try {
+          const data = canvas.toDataURL('image/jpeg', 0.72);
+          arr.push(data);
+          renderPhotoGrid(type);
+        } catch (err) {
+          console.error('이미지 처리 실패', err);
+          showToast('이미지 처리 중 오류가 발생했습니다. 다른 파일을 시도하세요.');
+        }
       };
+      img.onerror = () => showToast('이미지 로드에 실패했습니다. 다른 파일을 시도하세요.');
       img.src = e.target.result;
     };
+    reader.onerror = () => showToast('파일을 읽을 수 없습니다. 다른 파일을 시도하세요.');
     reader.readAsDataURL(file);
   });
   event.target.value = '';
@@ -3081,7 +3113,7 @@ function renderHOF() {
       <div class="hof-rank">${medals[i]}</div>
       ${thumb}
       <div class="hof-recipe-name">${shortTitle}</div>
-      <div class="hof-recipe-author">${user.avatar} ${user.name}</div>
+      <div class="hof-recipe-author">${user.avatar} ${escapeHTML(user.name)}</div>
       <div class="hof-likes">❤️ ${likeCount}</div>
     </div>`;
   }).join('');
