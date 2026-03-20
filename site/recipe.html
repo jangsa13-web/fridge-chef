@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>레시피 - 만인의 레시피</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header class="site-header"><div class="container"><h1>만인의 레시피</h1><nav><a href="index.html">홈</a></nav></div></header>
+  <main class="container">
+    <div id="recipe"></div>
+  </main>
+  <footer class="site-footer"><div class="container">© 만인의 레시피</div></footer>
+  <script src="assets/app.js"></script>
+  <script>
+    (async ()=>{
+      const params = new URLSearchParams(location.search); const id = params.get('id')
+      const data = await window.App.loadData()
+      const r = data.find(x=>x.id===id)
+      if(!r){ document.getElementById('recipe').innerHTML = '<p>레시피를 찾을 수 없습니다.</p>'; return }
+      document.getElementById('recipe').innerHTML = `
+        <article class='recipe-detail'>
+          <h2>${r.title}</h2>
+          <div class='meta'>${r.cuisine||''} · ${r.time||''}분 · ${r.servings||1}인분</div>
+          <h3>재료</h3>
+          <ul>${(r.ingredients||[]).map(i=>`<li>${i}</li>`).join('')}</ul>
+          <h3>조리 단계</h3>
+          <ol>${(r.steps||[]).map(s=>`<li>${s}</li>`).join('')}</ol>
+          <p class='source'>출처: ${r.source||'만인의 레시피'}</p>
+        </article>
+      `
+    })()
+  </script>
+</body>
+</html>

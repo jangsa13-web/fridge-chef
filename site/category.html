@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>카테고리 - 만인의 레시피</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header class="site-header"><div class="container"><h1>만인의 레시피</h1><nav><a href="index.html">홈</a></nav></div></header>
+  <main class="container">
+    <h2 id="catTitle">카테고리</h2>
+    <div id="list" class="grid"></div>
+  </main>
+  <footer class="site-footer"><div class="container">© 만인의 레시피</div></footer>
+  <script src="assets/app.js"></script>
+  <script>
+    (async ()=>{
+      const params = new URLSearchParams(location.search); const c = params.get('c') || ''
+      document.getElementById('catTitle').textContent = c || '모든 레시피'
+      const data = await window.App.loadData()
+      const list = data.filter(r => !c || (r.cuisine && r.cuisine.includes(c)))
+      document.getElementById('list').innerHTML = list.map(r=>`<a class='card' href='recipe.html?id=${encodeURIComponent(r.id)}'><div class='card-body'><h3>${r.title}</h3><p class='meta'>${r.cuisine||''} · ${r.time||''}분</p></div></a>`).join('')
+    })()
+  </script>
+</body>
+</html>

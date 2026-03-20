@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>만인의 레시피 — 아이 아빠의 비밀 레시피</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>만인의 레시피</h1>
+      <p class="tagline">아이 키우는 한 아빠가 만든, 아이들에게 인기 있었던 소박한 비밀 레시피를 모았습니다.</p>
+      <nav>
+        <a href="index.html">홈</a>
+        <a href="category.html?c=한식">한식</a>
+        <a href="category.html?c=중식">중식</a>
+        <a href="category.html?c=일식">일식</a>
+        <a href="category.html?c=양식">양식</a>
+        <a href="about.html">소개</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section>
+      <h2>추천 레시피</h2>
+      <div id="featured" class="grid"></div>
+    </section>
+
+    <section>
+      <h2>최신 업로드</h2>
+      <div id="latest" class="grid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">© 만인의 레시피 — 가족을 위한 소박한 한 그릇</div>
+  </footer>
+
+  <script src="assets/app.js"></script>
+  <script>
+    // render featured and latest after data loads
+    window.onload = async ()=>{
+      const data = await window.App.loadData()
+      const featured = data.slice(0,6)
+      const latest = data.slice(0,12)
+      const froot = document.getElementById('featured')
+      const lroot = document.getElementById('latest')
+      const card = r => `<a class='card' href='recipe.html?id=${encodeURIComponent(r.id)}'>
+        <div class='card-body'>
+          <h3>${r.title}</h3>
+          <p class='meta'>${r.cuisine||''} · ${r.time||''}분</p>
+        </div></a>`
+      froot.innerHTML = featured.map(card).join('')
+      lroot.innerHTML = latest.map(card).join('')
+    }
+  </script>
+</body>
+</html>

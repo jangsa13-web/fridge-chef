@@ -1,0 +1,18 @@
+:root{--bg:#fff;--muted:#666;--accent:#FF6B35}
+*{box-sizing:border-box}
+body{font-family: -apple-system,BlinkMacSystemFont,'Noto Sans KR',Segoe UI,Roboto,Helvetica,Arial;line-height:1.4;margin:0;background:#f6f7f8;color:#222}
+.container{max-width:980px;margin:0 auto;padding:20px}
+.site-header{background:linear-gradient(90deg,#FF6B35,#FF9F1C);color:#fff;padding:28px 0}
+.site-header h1{margin:0;font-size:22px}
+.site-header p.tagline{margin:6px 0 0 0;opacity:0.95}
+.site-header nav{margin-top:8px}
+.site-header a{color:#fff;margin-right:12px;text-decoration:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,0.04);overflow:hidden;text-decoration:none;color:inherit}
+.card-body{padding:12px}
+.card h3{margin:0 0 8px 0;font-size:16px}
+.meta{color:var(--muted);font-size:13px}
+.recipe-detail{background:#fff;padding:18px;border-radius:8px}
+.site-footer{padding:18px 0;background:#fff;margin-top:30px;border-top:1px solid #eee;text-align:center}
+button{font-weight:600}
+@media(max-width:600px){.site-header nav{display:flex;flex-wrap:wrap}}
